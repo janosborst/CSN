@@ -3,7 +3,7 @@ import math
 from tqdm import tqdm
 import json
 import numpy as np
-
+from sklearn.preprocessing import StandardScaler
 
 class Utils:
     def __init__(self, minScale=-25, maxScale=25):
@@ -213,7 +213,7 @@ class UMAPGenerator:
         self.metric = metric
         self.verbose = verbose
 
-    def generate(self):
+    def generate(self, metric="correlation"):
         try:
             import umap
             from sklearn.preprocessing import StandardScaler
@@ -235,6 +235,7 @@ class UMAPGenerator:
             out = json.dumps(centeredEmbedding, cls=NumpyEncoder)
             out_file.write(out)
         print(f"saved UMAP.json")
+        return centeredEmbedding
 
 class TSNEGenerator:
     def __init__(self, directory, data=None, n_components=2, verbose=1, random_state=123):
@@ -244,7 +245,7 @@ class TSNEGenerator:
         self.verbose = verbose
         self.random_state = random_state
 
-    def generate(self):
+    def generate(self, metric="euclidean"):
         try:
             from sklearn.manifold import TSNE
             from sklearn.preprocessing import StandardScaler
@@ -253,7 +254,7 @@ class TSNEGenerator:
             
         print("Generating t-SNE...")
         x = StandardScaler().fit_transform(self.data)
-        tsne = TSNE(n_components=self.n_components, verbose=self.verbose, random_state=self.random_state)
+        tsne = TSNE(n_components=self.n_components, verbose=self.verbose, random_state=self.random_state, metric=metric)
         embedding = tsne.fit_transform(x)
         normalized = Utils().normalize(embedding)
         centeredEmbedding = Utils().center(normalized)

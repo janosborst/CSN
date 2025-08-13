@@ -1,3 +1,7 @@
+.ipynb_checkpoints
+.idea
+__pycache__
+
 # Node and React specific files
 node_modules/
 package-lock.json
